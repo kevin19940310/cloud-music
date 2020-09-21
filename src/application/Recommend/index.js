@@ -21,7 +21,8 @@ function Recommend(props) {
       getBannerDataDispatch();
       getRecommendListDataDispatch();
     }
-  }, []);
+     // eslint-disable-next-line
+  }, [bannerList]);
   const bannerListJS = bannerList ? bannerList : [];
   const recommendListJS = recommendList ? recommendList : [];
 
@@ -34,7 +35,6 @@ function Recommend(props) {
   }
 
   function onScroll() {
-    // console.log('上拉滚动');
     forceCheck()
   }
 

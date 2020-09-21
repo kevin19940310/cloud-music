@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Scroll from '../../components/Scroll'
 import { PropTypes } from 'prop-types';
 import { List, ListItem } from './style'

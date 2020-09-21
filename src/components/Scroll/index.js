@@ -1,7 +1,10 @@
-import React, { useRef, useEffect, useImperativeHandle, useState, forwardRef } from 'react'
+import React, { useRef, useEffect, useImperativeHandle, useState, forwardRef, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import BScroll from 'better-scroll'
+import { debounce } from '../../util/utils' 
 import styled from 'styled-components';
+import Loading from '../../baseUI/loading/index';
+import Loading2 from '../../baseUI/loading-v2/index';
 
 const ScrollContainer = styled.div`
   width: 100%;
@@ -9,11 +12,12 @@ const ScrollContainer = styled.div`
   overflow: hidden;
 `
 
-const Scroll = forwardRef((props,ref) => {
+const Scroll = forwardRef((props, ref) => {
   const [bScroll, setBScroll] = useState();
   const scrollContainerRef = useRef();
   const { direction, click, refresh, bounceTop, bounceBottom } = props;
   const { pullUp, pullDown, onScroll } = props;
+  const { pullUpLoading, pullDownLoading, enterLoading } = props
 
   useEffect(() => {
     const Scroll = new BScroll(scrollContainerRef.current, {
@@ -30,7 +34,16 @@ const Scroll = forwardRef((props,ref) => {
     return () => {
       setBScroll(null);
     }
+    // eslint-disable-next-line
   }, [])
+
+  let pullUpDebounce = useMemo (() => {
+    return debounce (pullUp, 600)
+  }, [pullUp]);
+
+  let pullDownDebounce = useMemo (() => {
+    return debounce (pullDown, 600)
+  }, [pullDown]);
 
   // 每次重新加载 刷新实例
   useEffect(() => {
@@ -53,13 +66,13 @@ const Scroll = forwardRef((props,ref) => {
     bScroll.on('scrollEnd', () => {
       // 判断是否滑动到了底部
       if (bScroll.y <= bScroll.maxScrollY + 100) {
-        pullUp();
+        pullUpDebounce();
       }
     });
     return () => {
       bScroll.off('scrollEnd');
     }
-  }, [pullUp, bScroll]);
+  }, [pullUp,pullUpDebounce, bScroll]);
 
   // 用户下拉刷新
   useEffect(() => {
@@ -67,13 +80,13 @@ const Scroll = forwardRef((props,ref) => {
     bScroll.on('touchEnd', (pos) => {
       // 判断用户的下拉动作
       if (pos.y > 50) {
-        pullDown();
+        pullDownDebounce()
       }
     });
     return () => {
       bScroll.off('touchEnd');
     }
-  }, [pullDown, bScroll]);
+  }, [pullDown,pullDownDebounce, bScroll]);
 
 
   // 一般和 forwardRef 一起使用，ref 已经在 forWardRef 中默认传入
@@ -93,9 +106,16 @@ const Scroll = forwardRef((props,ref) => {
     }
   }));
 
+  const PullUpDisplayStyle = pullUpLoading || enterLoading ? { display: "" } : { display: "none" };
+  const PullDownDisplayStyle = pullDownLoading ? { display: "" } : { display: "none" };
+
   return (
     <ScrollContainer ref={scrollContainerRef}>
       {props.children}
+      {/* 滑到底部加载动画 */}
+      <div style={PullUpDisplayStyle}><Loading></Loading></div>
+      {/* 顶部下拉刷新动画 */}
+      <div style={PullDownDisplayStyle}><Loading2></Loading2></div>
     </ScrollContainer>
   );
 })
