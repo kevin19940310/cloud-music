@@ -1,0 +1,2 @@
+export const CHANGE_ALBUM_LIST='album/ALBUM_LIST'
+export const CHANGE_ENDING_LOADING = 'album/ENDING_LOADING'

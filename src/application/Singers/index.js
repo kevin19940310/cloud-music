@@ -1,5 +1,6 @@
-import React, { useEffect,useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { connect } from "react-redux";
+import { renderRoutes } from 'react-router-config';
 import LazyLoad, { forceCheck } from 'react-lazyload';
 import * as actionTypes from './store/actionCreators';
 import Horizon from '../../baseUI/Horizon'
@@ -12,21 +13,22 @@ import {
 } from './style'
 import { categoryTypes, alphaTypes } from './data'
 
-import {CHANGE_ALPHA,CHANGE_CATEGORY,CategoryDataContext} from './cacheData'
+import { CHANGE_ALPHA, CHANGE_CATEGORY, CategoryDataContext } from './cacheData'
 
 
 
 function Singers(props) {
-  const {data,dispatch} = useContext(CategoryDataContext)
-  const {category, alpha} = data
+  const { data, dispatch } = useContext(CategoryDataContext)
+  const { category, alpha } = data
 
-  let { singerList, pageCount, enterLoading, pullUpLoading, pullDownLoading } = props
+  let { singerList, enterLoading, pullUpLoading, pullDownLoading } = props
   let { getHotSingerListDispatch, upDataSingersListDispatch, pullUpRefreshDispatch, pullDownRefreshDispatch } = props
 
   useEffect(() => {
-    if(singerList.length<=0){
+    if (singerList.length <= 0) {
       getHotSingerListDispatch()
     }
+    // eslint-disable-next-line
   }, [])
 
   function typeAndArea(CategoryTypes) {
@@ -47,13 +49,13 @@ function Singers(props) {
   const handleCategoryTypes = (id) => {
     let { type, area } = typeAndArea(id)
     // setOldCategory(id)
-    dispatch({type:CHANGE_CATEGORY,data:id})
+    dispatch({ type: CHANGE_CATEGORY, data: id })
     upDataSingersListDispatch(type, area, alpha)
   }
 
   const handleAlphaTypes = (id) => {
     let { type, area } = typeAndArea(category)
-    dispatch({type:CHANGE_ALPHA,data:id})
+    dispatch({ type: CHANGE_ALPHA, data: id })
     upDataSingersListDispatch(type, area, id)
   }
 
@@ -67,9 +69,9 @@ function Singers(props) {
     pullUpRefreshDispatch(type, area, alpha, singerList.length)
   }
 
-  function onScroll() {
+  const enterDetail = (id) => {
+    props.history.push(`singers/${id}`)
   }
-
 
   return (
     <NavContainer>
@@ -80,7 +82,7 @@ function Singers(props) {
           <List>
             {
               singerList && singerList.map((item, index) => (
-                <ListItem key={item.img1v1Id + '' + index}>
+                <ListItem key={item.img1v1Id + '' + index} onClick={() => enterDetail(item.id)}>
                   <div className="img_wrapper">
                     <LazyLoad placeholder={<img width="100%" height="100%" src={require('./loading.gif')} alt="music" />}>
                       <img src={`${item.picUrl}?param=300x300`} width="100%" height="100%" alt="music" />
@@ -93,13 +95,14 @@ function Singers(props) {
           </List>
         </Scroll>
       </ListContainer>
+      { renderRoutes (props.route.routes) }
     </NavContainer>
   )
 }
 
 const mapStateToProps = (state) => ({
   singerList: state.singers.singerList,
-  pageCount: state.singers.pageCount,
+  // pageCount: state.singers.pageCount,
   enterLoading: state.singers.enterLoading,
   pullUpLoading: state.singers.pullUpLoading,
   pullDownLoading: state.singers.pullDownLoading

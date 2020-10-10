@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { renderRoutes } from 'react-router-config';
 import { connect } from "react-redux";
 import * as actionTypes from './store/actionCreators';
 import Slider from '../../components/banner';
@@ -47,6 +48,7 @@ function Recommend(props) {
           <RecommendList recommendList={recommendListJS}></RecommendList>
         </div>
       </Scroll>
+      { renderRoutes (props.route.routes) }
     </Content>
   )
 }

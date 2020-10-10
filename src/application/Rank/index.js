@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { renderRoutes } from 'react-router-config';
 import * as actionTypes from './store/action';
 import { connect } from 'react-redux'
 import { Container, ListItem, List, SongList } from './style'
@@ -14,8 +15,10 @@ function Rank(props) {
   let { getRankListDispatch } = props
 
   useEffect(() => {
-    getRankListDispatch()
-  }, [])
+    if(!rankList.length){
+      getRankListDispatch()
+    }
+  }, [rankList,getRankListDispatch])
 
   // 榜单数据未加载出来之前都给隐藏
   let displayStyle = loading ? {"display":"none"}:  {"display": ""};
@@ -23,6 +26,9 @@ function Rank(props) {
   let globalStartIndex = filterIndex(rankList);
   let officialList = rankList.slice(0, globalStartIndex);
   let globalList = rankList.slice(globalStartIndex);
+  const enterDetail = (detail) => {
+    props.history.push (`/rank/${detail.id}`)
+  }
 
   const renderRankList = (list, global) => {
     return (
@@ -30,7 +36,7 @@ function Rank(props) {
         {
           list.map((item,index) => {
             return (
-              <ListItem key={item.coverImgId+''+index} tracks={item.tracks}>
+              <ListItem key={item.coverImgId+''+index} tracks={item.tracks} onClick={() => enterDetail (item)}>
                 <div className="img_wrapper">
                   <LazyLoad placeholder={<img width="100%" height="100%" src={require('./loading.gif')} alt="music" />}>
                       <img src={`${item.coverImgUrl}?param=300x300`} width="100%" height="100%" alt="music" />
@@ -71,7 +77,7 @@ function Rank(props) {
           {loading ? <Loading></Loading> : null}
         </div>
       </Scroll>
-      {/* {renderRoutes (props.route.routes)} */}
+      {renderRoutes (props.route.routes)}
     </Container>
   )
 }

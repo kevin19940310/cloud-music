@@ -19,24 +19,6 @@ const Scroll = forwardRef((props, ref) => {
   const { pullUp, pullDown, onScroll } = props;
   const { pullUpLoading, pullDownLoading, enterLoading } = props
 
-  useEffect(() => {
-    const Scroll = new BScroll(scrollContainerRef.current, {
-      scrollX: direction === "horizontal",
-      scrollY: direction === "vertical",
-      probeType: 3,
-      click: click,
-      bounce: {
-        top: bounceTop,
-        bottom: bounceBottom
-      }
-    })
-    setBScroll(Scroll)
-    return () => {
-      setBScroll(null);
-    }
-    // eslint-disable-next-line
-  }, [])
-
   let pullUpDebounce = useMemo (() => {
     return debounce (pullUp, 600)
   }, [pullUp]);
@@ -44,6 +26,27 @@ const Scroll = forwardRef((props, ref) => {
   let pullDownDebounce = useMemo (() => {
     return debounce (pullDown, 600)
   }, [pullDown]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const scroll = new BScroll(scrollContainerRef.current, {
+        scrollX: direction === "horizontal",
+        scrollY: direction === "vertical",
+        probeType: 3,
+        click: click,
+        bounce:{
+          top: bounceTop,
+          bottom: bounceBottom
+        }
+      });
+      setBScroll(scroll);
+    }, 500);
+    return () => {
+      setBScroll(null);
+    }
+    // eslint-disable-next-line
+  }, []);
+
 
   // 每次重新加载 刷新实例
   useEffect(() => {

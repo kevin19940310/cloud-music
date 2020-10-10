@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const baseUrl = 'http://localhost:3000/';
+export const baseUrl = 'http://47.96.9.165:3000/';
 
 //axios 的实例及拦截器配置
 const axiosInstance = axios.create ({
@@ -17,3 +17,6 @@ axiosInstance.interceptors.response.use (
 export {
   axiosInstance
 };
+
+//顶部的高度
+export const HEADER_HEIGHT = 45;
